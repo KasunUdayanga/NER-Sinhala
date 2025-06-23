@@ -4,7 +4,7 @@ import csv
 import time
 
 API_KEY = 'AIzaSyBm2txz83DWABe3NPnKSIDRe8ZOBSBuMhk'
-VIDEO_ID = 'UhvKMWki0aI&t=574s'
+VIDEO_ID = 'JijlkFwbhWU'
 
 youtube = build('youtube', 'v3', developerKey=API_KEY)
 
