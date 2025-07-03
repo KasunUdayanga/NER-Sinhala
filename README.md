@@ -15,9 +15,13 @@ python -m venv .venv
 
 ### ▶️ Step 2: Activate the Environment
 
-- **Windows**
+
 ```bash
 .venv\Scripts\activate
+```
+- **or**
+```bash
+activate
 ```
 
 ### 📦 Step 3: Install Label Studio
