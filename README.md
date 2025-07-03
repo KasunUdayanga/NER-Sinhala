@@ -20,11 +20,6 @@ python -m venv .venv
 .venv\Scripts\activate
 ```
 
-- **macOS/Linux**
-```bash
-source .venv/bin/activate
-```
-
 ### 📦 Step 3: Install Label Studio
 
 ```bash
