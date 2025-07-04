@@ -2,26 +2,26 @@ from googleapiclient.discovery import build
 import re
 import csv
 import time
-import json
 
-# --- Configuration ---
-API_KEY = 'AIzaSyBm2txz83DWABe3NPnKSIDRe8ZOBSBuMhk'  # Replace with your key
-VIDEO_ID = 'c7Jld02-d1w'  # Replace with your video ID
+API_KEY = 'AIzaSyBm2txz83DWABe3NPnKSIDRe8ZOBSBuMhk'
+VIDEO_ID = 'YVcvifW0RgY'
 
-# --- YouTube API Setup ---
 youtube = build('youtube', 'v3', developerKey=API_KEY)
 
-# --- Regex Patterns ---
+# Regex for Sinhala unicode block
 sinhala_pattern = re.compile(r'[\u0D80-\u0DFF]')
+
+# Regex to remove emojis and unwanted characters:
+# Keep Sinhala letters (\u0D80-\u0DFF), spaces, and optionally basic punctuation
 clean_pattern = re.compile(r'[^\u0D80-\u0DFF\s]')
 
-# --- Clean Sinhala Text ---
 def clean_sinhala_text(text):
+    # Remove all characters except Sinhala letters and spaces
     cleaned = clean_pattern.sub('', text)
+    # Replace multiple spaces with a single space
     cleaned = re.sub(r'\s+', ' ', cleaned).strip()
     return cleaned
 
-# --- Get Sinhala Comments ---
 def get_sinhala_comments(video_id):
     sinhala_comments = []
     next_page_token = None
@@ -37,12 +37,14 @@ def get_sinhala_comments(video_id):
         response = request.execute()
 
         for item in response['items']:
+            # Top-level comment
             top_comment = item['snippet']['topLevelComment']['snippet']['textDisplay']
             if sinhala_pattern.search(top_comment):
-                cleaned = clean_sinhala_text(top_comment)
-                if cleaned:
-                    sinhala_comments.append(cleaned)
+                cleaned_comment = clean_sinhala_text(top_comment)
+                if cleaned_comment:
+                    sinhala_comments.append(cleaned_comment)
 
+            # Replies
             if 'replies' in item:
                 for reply in item['replies']['comments']:
                     reply_text = reply['snippet']['textDisplay']
@@ -59,13 +61,14 @@ def get_sinhala_comments(video_id):
 
     return sinhala_comments
 
-# --- Run and Save ---
 comments = get_sinhala_comments(VIDEO_ID)
 
-# Save as JSON (Array Format)
-json_array = [{"data": {"text": comment}} for comment in comments if comment.strip()]
-json_filename = f"sinhala_comments_{VIDEO_ID}_labelstudio.json"
-with open(json_filename, 'w', encoding='utf-8') as f:
-    json.dump(json_array, f, ensure_ascii=False, indent=2)
+# Save to CSV
+filename = f"sinhala_comments_{VIDEO_ID}.csv"
+with open(filename, 'w', encoding='utf-8-sig', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerow(['Index', 'Sinhala Comment'])
+    for idx, comment in enumerate(comments, 1):
+        writer.writerow([idx, comment])
 
-print(f"✅ Exported {len(json_array)} Sinhala comments to {json_filename} (JSON array for Label Studio)")
+print(f"✅ Extracted and cleaned {len(comments)} Sinhala comments to {filename}")
