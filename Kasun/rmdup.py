@@ -45,7 +45,7 @@ def process_comments(input_file, output_file):
             chunk = words[i:i+20]
             word_chunks.append(" ".join(chunk))
         
-        print(f"Created {len(word_chunks)} comments with approximately 200 words each")
+        print(f"Created {len(word_chunks)} comments with approximately 20 words each")
         
         # Create a new dataframe with the processed comments
         new_df = pd.DataFrame({
