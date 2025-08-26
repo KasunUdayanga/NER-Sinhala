@@ -1,22 +1,17 @@
-input_file = "lable_data1.conll"     # your original file
-output_file = "clean_datasetts.conll"
+input_file = "n.conll"      # your original file
+output_file = "clean_datasetaa.conll"   # cleaned dataset
 
 with open(input_file, "r", encoding="utf-8") as infile, open(output_file, "w", encoding="utf-8") as outfile:
     for line in infile:
         line = line.strip()
-        
-        # Skip DOCSTART and empty lines
-        if not line or line.startswith("-DOCSTART-"):
+        if not line:
+            outfile.write("\n")  # keep sentence boundaries
             continue
-        
-        # Split columns
+        if line.startswith("-DOCSTART-"):  # skip DOCSTART
+            continue
         parts = line.split()
-        
         if len(parts) >= 2:
-            word = parts[0].strip()
-            label = parts[-1].strip().replace(" ", "")  # fix labels like "B- PER" -> "B-PER"
-            
-            # Write cleaned word + label (always one space)
+            word = parts[0]
+            label = parts[-1]  # last column is NER label
             outfile.write(f"{word} {label}\n")
-
-#remove all spaces and other unwanted characters
+#create as for using as dataset
